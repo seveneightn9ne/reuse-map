@@ -1,0 +1,3 @@
+html, body {margin: 0; padding:0; height:100%;position:relative;}
+iframe#whereis {position: absolute; left:0; top: 0;}
+#the-void{display:none;}
