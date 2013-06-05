@@ -10,7 +10,6 @@ import mitmap.views
 
 urlpatterns = patterns('',
     url(r'^email_download', emails.views.email_download, name='email_download'),
-    url(r'^list_urls', mitmap.views.list_urls, name='list_urls'),
 
     # Examples:
     # url(r'^$', 'reuse_map.views.home', name='home'),
