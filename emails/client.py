@@ -21,7 +21,7 @@ class EmailClient(object):
         messages = self.server.search(['NOT DELETED'])
         self._process_messages(messages)
 
-    def _process_messages(self, uids):
+    def _process_messages(self, uids, move=False):
         response = self.server.fetch(uids, ['FLAGS', 'RFC822', 'RFC822.SIZE'])
         for msg_uid, data in response.iteritems():
             with transaction.commit_on_success():
@@ -38,5 +38,6 @@ class EmailClient(object):
                     EmailFlag.objects.get_or_create(email=email, flag=flag)[0].save()
 
                 # move message
-                self.server.copy([msg_uid], 'auto_processed')
-                self.server.delete_messages([msg_uid])
+                if move:
+                    self.server.copy([msg_uid], 'auto_processed')
+                    self.server.delete_messages([msg_uid])
