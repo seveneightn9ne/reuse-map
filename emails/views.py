@@ -1,9 +1,11 @@
 from django.http import HttpResponse
 
-from client import EmailClient
+import gather
 
-def email_download(request):
-  ec = EmailClient()
-  ec.connect()
-  ec.process_new_messages()
-  return HttpResponse("Ok, I've downloaded the emails.")
+def download_all_emails(request):
+    gather.download_all_emails()
+    return HttpResponse("Ok, I've downloaded the emails.")
+
+def create_all_header_entries(request):
+    gather.create_all_header_entries()
+    return HttpResponse("Ok, I've created the header entries.")

@@ -9,7 +9,8 @@ import mitmap.views
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^email_download', emails.views.email_download, name='email_download'),
+    url(r'^download_all_emails', emails.views.download_all_emails, name='download_all_emails'),
+    url(r'^create_all_header_entries', emails.views.create_all_header_entries, name='create_all_header_entries'),
 
     # Examples:
     # url(r'^$', 'reuse_map.views.home', name='home'),
