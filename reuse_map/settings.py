@@ -151,6 +151,10 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler'
+        },
+        'null': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler'
         }
     },
     'loggers': {
@@ -161,7 +165,7 @@ LOGGING = {
         },
         'django.db.backends': {
             'level': 'DEBUG',
-            'handlers': ['console']
+            'handlers': ['null']
         }
     }
 }
