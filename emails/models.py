@@ -23,8 +23,13 @@ class EmailMessage(models.Model):
 
     def create_header_entries(self):
         for (key, value) in self.get_email().items():
-            if EmailHeader.objects.filter(email=self, key=key).count() == 0:
-                EmailHeader(email=self, key=key, value_short=value[:254], value=value).save()
+            EmailHeader.objects.get_or_create(
+                email = self,
+                key   = key,
+                defaults={
+                    'value_short': value[:254],
+                    'value':       value,
+                } )
 
 
 class EmailFlag(models.Model):
