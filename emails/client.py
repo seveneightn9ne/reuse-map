@@ -64,20 +64,20 @@ class EmailClient(object):
             if debug: print "processing %s" % msg_uid
             with transaction.commit_on_success():
                 # extract data
-                flags     = data['FLAGS']
+                flags    = data['FLAGS']
                 rfc_size = data['RFC822.SIZE']
                 raw_body = data['RFC822']
                 seq      = data['SEQ']
 
                 # save objects
                 email, _ = EmailMessage.objects.get_or_create(
-                    uid=msg_uid,
-                    username=self.config['USERNAME'],
-                    host=self.config['HOST'],
+                    uid      = msg_uid,
+                    username = self.config['USERNAME'],
+                    host     = self.config['HOST'],
                     defaults = {
                         'raw_body': raw_body,
                         'rfc_size': rfc_size,
-                        'seq': data['SEQ'],
+                        'seq':      data['SEQ'],
                     } )
 
                 email.save()
