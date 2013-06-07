@@ -63,15 +63,20 @@ class EmailClient(object):
                 seq      = data['SEQ']
 
                 # save objects
-                email,_ = EmailMessage.objects.get_or_create(
-                    uid=msg_uid,
-                    username=self.config['USERNAME'],
-                    host=self.config['HOST'],
-                    raw_body=raw_body,
-                    rfc_size=rfc_size,
-                    seq=data['SEQ'])
+                filter = EmailMessage.objects.filter( uid=msg_uid, username=self.config['USERNAME'], host=self.config['HOST'] )
+                if filter.count() == 0:
+                    email = EmailMessage(
+                        uid=msg_uid,
+                        username=self.config['USERNAME'],
+                        host=self.config['HOST'],
+                        raw_body=raw_body,
+                        rfc_size=rfc_size,
+                        seq=data['SEQ'])
 
-                email.save()
+                    email.save()
+                else:
+                    email = filter.all()[0]
+
                 for flag in flags:
                     EmailFlag.objects.get_or_create(email=email, flag=flag)[0].save()
 
