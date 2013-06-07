@@ -18,8 +18,8 @@ class EmailMessage(models.Model):
         unique_together = (('uid', 'username', 'host'))
 
     def get_email(self):
-      # TODO email.message_from_string can't handle unicode. Is that an issue?
-      return email.message_from_string(str(self.raw_body))
+        # TODO email.message_from_string can't handle unicode. Is that an issue?
+        return email.message_from_string(str(self.raw_body))
 
     def create_header_entries(self):
         for (key, value) in self.get_email().items():
