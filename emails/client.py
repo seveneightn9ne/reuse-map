@@ -45,6 +45,13 @@ class EmailClient(object):
         select_info = self.server.select_folder(self.config['FOLDER'])
 
     def process_new_messages(self, debug=False):
+        """
+        Get mesages from the server.
+
+        Note: new information on existing uids will be ignored.
+        For example, if the rfc_size changes (which is a strangely common occurrence),
+        the new value will be ignored.
+        """
         if debug: print "searching"
         messages = self.server.search(self.config['SELECTORS'])
         if debug: print "done searching"
@@ -63,19 +70,17 @@ class EmailClient(object):
                 seq      = data['SEQ']
 
                 # save objects
-                filter = EmailMessage.objects.filter( uid=msg_uid, username=self.config['USERNAME'], host=self.config['HOST'] )
-                if filter.count() == 0:
-                    email = EmailMessage(
-                        uid=msg_uid,
-                        username=self.config['USERNAME'],
-                        host=self.config['HOST'],
-                        raw_body=raw_body,
-                        rfc_size=rfc_size,
-                        seq=data['SEQ'])
+                email, _ = EmailMessage.objects.get_or_create(
+                    uid=msg_uid,
+                    username=self.config['USERNAME'],
+                    host=self.config['HOST'],
+                    defaults = {
+                        'raw_body': raw_body,
+                        'rfc_size': rfc_size,
+                        'seq': data['SEQ'],
+                    } )
 
-                    email.save()
-                else:
-                    email = filter.all()[0]
+                email.save()
 
                 for flag in flags:
                     EmailFlag.objects.get_or_create(email=email, flag=flag)[0].save()
