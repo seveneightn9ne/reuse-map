@@ -25,18 +25,19 @@ quantity = [
     "a few"
 ]
 bldg = "[^\w]([new]*\d\d?[newabcp]?)"
+bldg_text = "b(?:ui)?ld(?:in)?g?"
 room = bldg+"-[a-z]?\d\d\d?\d?"
 places = [
     "("+bldg+" loading dock)", 
     "(lobby \d+)", 
     "(room "+room+")", 
     "(outside (?:of)? "+room+")", 
-    "(\w+ floor (?:of)? b(?:ui)?ld(?:in)?g? "+bldg+")",
-    "(b(?:ui)?ld(?:in)?g? "+bldg+",? floor \w+)",
-    "(b(?:ui)?ld(?:in?)g? "+bldg+",? \w+ floor)",
+    "(\w+ floor (?:of)? "+bldg_text+" "+bldg+")",
+    "("+bldg_text+" "+bldg+",? floor \w+)",
+    "("+bldg_text+" "+bldg+",? \w+ floor)",
     "(.+ floor .+ .+)",
     "("+room+")", 
-    "(b(?:ui)?ld(?:in)?g? "+bldg+")",
+    "("+bldg_text+" "+bldg+")",
     "("+bldg+"-\d\w\w floor)"
 ]
 
