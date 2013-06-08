@@ -23,6 +23,11 @@ function initialize() {
 
   var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
+
+  var northWest = new google.maps.LatLng(42.36292002038214, -71.10785007476807);
+  var southEast = new google.maps.LatLng(42.35546777871744, -71.07746601104736);
+  map.fitBounds(new google.maps.LatLngBounds(southWest,northEast));
+
   var marker = new google.maps.Marker({
     position: map.getCenter(),
     map: map,
@@ -32,6 +37,12 @@ function initialize() {
   google.maps.event.addListener(map, 'center_changed', function() {
     // prevent dragging
     // map.panTo(marker.getPosition());
+  });
+
+  google.maps.event.addListener(map, 'click', function() {
+    console.log("new google.maps.LatLng", arguments[0].latLng.toString())
+    // map.setZoom(17);
+    // map.setCenter(marker.getPosition());
   });
 }
 
