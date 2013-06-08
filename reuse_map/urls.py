@@ -9,6 +9,8 @@ import mitmap.views
 # admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^map$', 'mitmap.views.map', name='map')
+
     # Examples:
     # url(r'^$', 'reuse_map.views.home', name='home'),
     # url(r'^reuse_map/', include('reuse_map.foo.urls')),
