@@ -6,47 +6,47 @@ from emails.models import EmailMessage, EmailHeader
 
 claimed = [
     "(.*)claimed",
-    "claimed (.+)", 
-    "(.*)taken", 
-    "(.*)gone", 
+    "claimed (.+)",
+    "(.*)taken",
+    "(.*)gone",
     "took (.+)"
 ]
 not_claimed = [
-    "(.+) not claimed", 
-    "(.+) still there", 
-    "(.+) remain", 
-    "(.+) remains", 
+    "(.+) not claimed",
+    "(.+) still there",
+    "(.+) remain",
+    "(.+) remains",
     "(.+) not taken"
 ]
 quantity = [
-    "both", 
-    "all", 
-    "one", 
+    "both",
+    "all",
+    "one",
     "a few"
 ]
 bldg = "[^\w]([new]*\d\d?[newabcp]?)"
 bldg_text = "b(?:ui)?ld(?:in)?g?"
 room = bldg+"-[a-z]?\d\d\d?\d?"
 places = [
-    "("+bldg+" loading dock)", 
-    "(lobby \d+)", 
-    "(room "+room+")", 
-    "(outside (?:of)? "+room+")", 
+    "("+bldg+" loading dock)",
+    "(lobby \d+)",
+    "(room "+room+")",
+    "(outside (?:of)? "+room+")",
     "(\w+ floor (?:of)? "+bldg_text+" "+bldg+")",
     "("+bldg_text+" "+bldg+",? floor \w+)",
     "("+bldg_text+" "+bldg+",? \w+ floor)",
     "(.+ floor .+ .+)",
-    "("+room+")", 
+    "("+room+")",
     "("+bldg_text+" "+bldg+")",
     "("+bldg+"-\d\w\w floor)"
 ]
 
 
 def test():
-    parse_single_item_messages(get_messages())
+    parse_single_item_emailmessages(get_emailmessages())
 
 
-def get_messages():
+def get_emailmessages():
     # q = []
     # for suid in range(1,40):
     #     q.append(EmailMessage.objects.get(uid=suid, username='reusemap', host='imap.mail.yahoo.com'))
@@ -78,14 +78,17 @@ def print_dict(dictionary):
     for key,val in dictionary.iteritems():
         print "["+str(key)+"]:"
         print "\t"+str(val)+"\n"
-def parse_single_item_messages(messages):
+
+
+def parse_single_item_messages(emailmessages):
     locations = {}
-    for message in messages:
+    for message in emailmessages:
         #print 'parsing '+message
         location, full_text = parse_single_item_message(message)
         locations[full_text] = location
     print_dict(locations)
-        
+
+
 def parse_single_item_message(emailmessage):
     full_text = extract_text(emailmessage)
 
