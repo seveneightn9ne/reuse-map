@@ -1,3 +1,5 @@
+import os
+
 # Django settings for reuse_map project.
 
 DEBUG = True
@@ -15,7 +17,7 @@ DATABASES = {
         'NAME': 'reuse_map',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': 'reuse_map',
-        'PASSWORD': 'fork-left-ride-on',
+        'PASSWORD': '*** secret.from.local_settings ***',
         'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',                      # Set to empty string for default.
     }
@@ -83,7 +85,23 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'ophn46q=w_ho+5_x3j=j@f38+mi%i=hmuv#+e4oqdy8wdg7ctp'
+# create new secret key file if one does not exist.
+def find_or_create_secret_key():
+    secret_key_filepath = os.path.join(os.path.dirname(__file__), 'secret_key.py')
+
+    if os.path.isfile(secret_key_filepath):
+        from secret_key import SECRET_KEY
+        return SECRET_KEY
+    else:
+        from django.utils.crypto import get_random_string
+        chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+        new_key = get_random_string(50, chars)
+        with file(secret_key_filepath, 'w') as f:
+            f.write("# Django secret key\n# Do NOT check this into version control.\n\nSECRET_KEY = '%s'\n" % new_key)
+        from secret_key import SECRET_KEY
+        return SECRET_KEY
+
+SECRET_KEY = find_or_create_secret_key()
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -170,3 +188,10 @@ LOGGING = {
         }
     }
 }
+
+
+# import local settings
+try:
+    from local_settings import *
+except ImportError, e:
+    print 'Unable to load local_settings.py:', e

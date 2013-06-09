@@ -1,2 +1,4 @@
 .DS_Store
 *.pyc
+secret_key.py
+local_settings.py
