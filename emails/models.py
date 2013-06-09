@@ -15,7 +15,7 @@ class EmailMessage(models.Model):
     date_modified = models.DateTimeField(auto_now=True, db_index=True)
 
     class Meta:
-        unique_together = (('uid', 'username', 'host'))
+        unique_together = (('uid', 'username', 'host'),)
 
     def get_email(self):
         # TODO email.message_from_string can't handle unicode. Is that an issue?
@@ -62,4 +62,4 @@ class EmailHeader(models.Model):
     date_modified = models.DateTimeField(auto_now=True, db_index=True)
 
     class Meta:
-        unique_together = (('email', 'key'))
+        unique_together = (('email', 'key'),)
