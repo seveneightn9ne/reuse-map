@@ -43,10 +43,14 @@ places = [
     "("+bldg+"-"+nth_floor+")",
     "("+nth_floor+" \w+ \w+)()"
 ]
+no_places = [
+    "inter[ -]?office (?:address)|(?:mail)"
+]
 
 
 def test():
     parse_single_item_emailmessages(get_emailmessages())
+    # parse_single_item_emailmessages(get_emailmessages()[0:1])
 
 
 def get_emailmessages():
@@ -79,25 +83,41 @@ def parse_single_item_emailmessages(emailmessages):
         pprint(emailmessage)
         print '\n'
         result = parse_single_item_emailmessage(emailmessage)
-        if 'location' in result:
-            pprint(result)
-        else:
-            pprint(result)
+        pprint(result)
+        if not ('location' in result or 'noplace' in result):
             print "\n!! No location found in message"
 
 
 def parse_single_item_emailmessage(emailmessage):
     full_text = extract_text(emailmessage)
+    lower_text = extract_text(emailmessage).lower()
 
     result = {}
     result['full_text'] = full_text[:100] if len(full_text)>102 else full_text
+
+    for no_place in no_places:
+        location_search = re.search(r""+no_place, lower_text.lower())
+        if location_search:
+            result['noplace'] = True
+            return result
 
     for place in places:
         #print 'searching for '+place
         location_search = re.search(r"(?:^|\W)"+place, full_text.lower())
         if location_search:
             print "matched "+place
-            result['location'] = location_search.groups()
+
+            building = location_search.groups()[0]
+            # TODO remove this if statement when places gaurantees two capture groups
+            if len(location_search.groups()) > 1:
+                room = location_search.groups()[1]
+            else:
+                room = None
+
+            result['location'] = {
+                'building': building,
+                'room': room,
+            }
             return result
 
     return result
