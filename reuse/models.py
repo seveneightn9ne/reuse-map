@@ -2,7 +2,7 @@ from django.db import models
 
 
 class ReuseObject(models.Model):
-    short    = models.CharField(max_length=255, db_index=True)
+    name     = models.CharField(max_length=255, db_index=True)
     details  = models.TextField(blank=True, null=True)
     poster   = models.EmailField(max_length=254)
     building = models.CharField(max_length=255, db_index=True, blank=True, null=True)
