@@ -31,6 +31,9 @@ class EmailMessage(models.Model):
                     'value':       value,
                 } )
 
+    def __repr__(self):
+        return "<{0.__class__.__name__}: id:{0.id} uid:{0.uid} username:{0.username} host:{0.host}>".format(self)
+
 
 class EmailFlag(models.Model):
     email = models.ForeignKey(EmailMessage, db_index=True)
