@@ -9,8 +9,12 @@ import mitmap.views
 # admin.autodiscover()
 
 urlpatterns = patterns('',
+    # User Facing
     url(r'^map$', 'mitmap.views.map', name='map'),
     url(r'^google_map$', 'mitmap.views.google_map', name='google_map'),
+
+    # API
+    url(r'^(?:API)|(?:api)/reuse_object$', 'reuse.views.reuse_object', name='reuse_object'),
 
     # Examples:
     # url(r'^$', 'reuse_map.views.home', name='home'),
