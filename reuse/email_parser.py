@@ -2,6 +2,7 @@ import sys
 import re
 import itertools
 from pprint import pprint
+from django.db.models import Q
 
 from emails.models import EmailMessage, EmailHeader
 
@@ -25,21 +26,22 @@ quantity = [
     "one",
     "a few"
 ]
-bldg = "[^\w]([new]*\d\d?[newabcp]?)"
+bldg = "([new]*\d\d?[newabcp]?)"
 bldg_text = "b(?:ui)?ld(?:in)?g?"
 room = bldg+"-[a-z]?\d\d\d?\d?"
+nth_floor = "\d\w\w floor"
 places = [
     "("+bldg+" loading dock)",
-    "(lobby \d+)",
+    "(lobby (\d+))",
     "(room "+room+")",
     "(outside (?:of)? "+room+")",
-    "(\w+ floor (?:of)? "+bldg_text+" "+bldg+")",
+    "("+nth_floor+" (?:of)? "+bldg_text+" "+bldg+")",
     "("+bldg_text+" "+bldg+",? floor \w+)",
-    "("+bldg_text+" "+bldg+",? \w+ floor)",
-    "(.+ floor .+ .+)",
+    "("+bldg_text+" "+bldg+",? "+nth_floor+")",
     "("+room+")",
     "("+bldg_text+" "+bldg+")",
-    "("+bldg+"-\d\w\w floor)"
+    "("+bldg+"-"+nth_floor+")",
+    "("+nth_floor+" \w+ \w+)()"
 ]
 
 
@@ -48,15 +50,10 @@ def test():
 
 
 def get_emailmessages():
-    # q = []
-    # for suid in range(1,40):
-    #     q.append(EmailMessage.objects.get(uid=suid, username='reusemap', host='imap.mail.yahoo.com'))
-    return EmailMessage.objects.all()
-    # return [
-    #     EmailMessage.objects.get(uid=33, username='reusemap', host='imap.mail.yahoo.com'),
-    #     EmailMessage.objects.get(uid=39, username='reusemap', host='imap.mail.yahoo.com'),
-    #     EmailMessage.objects.get(uid=40, username='reusemap', host='imap.mail.yahoo.com'),
-    # ]
+    return EmailMessage.objects.filter(Q(emailheader__key='To', emailheader__value__contains='reuse@mit.edu')|
+                                       Q(emailheader__key='Cc', emailheader__value__contains='reuse@mit.edu')).all()
+    #return EmailMessage.objects.filter(emailheader__key='To',emailheader__value__regex=r'^((?!reusemap@yahoo.com).*)$')
+    # return EmailMessage.objects.all()
 
 
 def extract_text(emailmessage):
@@ -93,12 +90,13 @@ def parse_single_item_emailmessage(emailmessage):
     full_text = extract_text(emailmessage)
 
     result = {}
-    result['full_text'] = full_text
+    result['full_text'] = full_text[:100] if len(full_text)>102 else full_text
 
     for place in places:
         #print 'searching for '+place
-        location_search = re.search(r""+place, full_text.lower())
+        location_search = re.search(r"(?:^|\W)"+place, full_text.lower())
         if location_search:
+            print "matched "+place
             result['location'] = location_search.groups()
             return result
 
