@@ -21,6 +21,12 @@ class EmailMessage(models.Model):
         # TODO email.message_from_string can't handle unicode. Is that an issue?
         return email.message_from_string(str(self.raw_body))
 
+    def get_header(self, key):
+        try:
+            return EmailHeader.objects.get(email=self, key=key).value
+        except EmailHeader.DoesNotExist:
+            return None
+
     def create_header_entries(self):
         for (key, value) in self.get_email().items():
             EmailHeader.objects.get_or_create(
