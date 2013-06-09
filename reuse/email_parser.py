@@ -1,6 +1,7 @@
 import sys
 import re
 import itertools
+from pprint import pprint
 
 from emails.models import EmailMessage, EmailHeader
 
@@ -74,32 +75,31 @@ def print_with_invisibles(s):
         else:
             sys.stdout.write(char)
 
-def print_dict(dictionary):
-    for key,val in dictionary.iteritems():
-        print "["+str(key)+"]:"
-        print "\t"+str(val)+"\n"
+
+def parse_single_item_emailmessages(emailmessages):
+    for emailmessage in emailmessages:
+        print '\n' * 3 + '*' * 20 + '\n' * 3
+        pprint(emailmessage)
+        print '\n'
+        result = parse_single_item_emailmessage(emailmessage)
+        if 'location' in result:
+            pprint(result)
+        else:
+            pprint(result)
+            print "\n!! No location found in message"
 
 
-def parse_single_item_messages(emailmessages):
-    locations = {}
-    for message in emailmessages:
-        #print 'parsing '+message
-        location, full_text = parse_single_item_message(message)
-        locations[full_text] = location
-    print_dict(locations)
-
-
-def parse_single_item_message(emailmessage):
+def parse_single_item_emailmessage(emailmessage):
     full_text = extract_text(emailmessage)
 
-    #print_with_invisibles(full_text)
-    #print(full_text.lower())
-    print '\n' + '-' * 20 + '\n'
+    result = {}
+    result['full_text'] = full_text
 
     for place in places:
         #print 'searching for '+place
         location_search = re.search(r""+place, full_text.lower())
         if location_search:
-            return location_search.groups(), full_text
-        else:
-            return None, None
+            result['location'] = location_search.groups()
+            return result
+
+    return result
