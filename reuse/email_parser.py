@@ -44,7 +44,7 @@ places = [
     "("+nth_floor+" \w+ \w+)()"
 ]
 no_places = [
-    "inter[ -]?office (?:address)|(?:mail)"
+    "(inter[ -]?office (?:(?:address)|(?:mail)))"
 ]
 
 
@@ -54,6 +54,7 @@ def test():
 
 
 def get_emailmessages():
+    # return EmailMessage.objects.filter(id=120)
     return EmailMessage.objects.filter(Q(emailheader__key='To', emailheader__value__contains='reuse@mit.edu')|
                                        Q(emailheader__key='Cc', emailheader__value__contains='reuse@mit.edu')).all()
     #return EmailMessage.objects.filter(emailheader__key='To',emailheader__value__regex=r'^((?!reusemap@yahoo.com).*)$')
@@ -90,20 +91,22 @@ def parse_single_item_emailmessages(emailmessages):
 
 def parse_single_item_emailmessage(emailmessage):
     full_text = extract_text(emailmessage)
-    lower_text = extract_text(emailmessage).lower()
+    lower_text = full_text.lower()
 
     result = {}
-    result['full_text'] = full_text[:100] if len(full_text)>102 else full_text
+    # result['full_text'] = full_text[:100] if len(full_text)>102 else full_text
+    # result['full_text'] = full_text
+    result['-lower_text'] = lower_text
 
     for no_place in no_places:
-        location_search = re.search(r""+no_place, lower_text.lower())
+        location_search = re.search(r""+no_place, lower_text)
         if location_search:
             result['noplace'] = True
             return result
 
     for place in places:
         #print 'searching for '+place
-        location_search = re.search(r"(?:^|\W)"+place, full_text.lower())
+        location_search = re.search(r"(?:^|\W)"+place, lower_text)
         if location_search:
             print "matched "+place
 
